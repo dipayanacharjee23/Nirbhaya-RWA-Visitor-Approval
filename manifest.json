@@ -1,0 +1,9 @@
+{
+"name":"Nirbhaya RWA Visitor",
+"short_name":"Nirbhaya Visitor",
+"start_url":"./",
+"display":"standalone",
+"background_color":"#f7f3ef",
+"theme_color":"#7c1d2d",
+"description":"Nirbhaya RWA Visitor Management System"
+}
