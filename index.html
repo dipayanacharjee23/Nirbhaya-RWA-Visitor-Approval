@@ -8,70 +8,144 @@
 <link rel="manifest" href="manifest.json">
 <title>Nirbhaya RWA Visitor</title>
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#f7f3ef;color:#201b1b}
-main{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
-.card{width:min(430px,100%);background:#fff;border-radius:24px;padding:28px;box-shadow:0 12px 36px rgba(0,0,0,.1)}
-.logo{width:64px;height:64px;border-radius:18px;background:#7c1d2d;color:#fff;display:grid;place-items:center;font-size:30px;margin-bottom:18px}
-h1{margin:0 0 6px;font-size:27px}.sub{margin:0 0 25px;color:#6d6464}
-label{display:block;font-weight:650;font-size:14px;margin:15px 0 7px}
-input{width:100%;padding:14px;border:1px solid #d8d0cc;border-radius:12px;font-size:16px}
-button{width:100%;padding:14px;border:0;border-radius:12px;background:#7c1d2d;color:#fff;font-size:16px;font-weight:700;margin-top:20px}
-button:disabled{opacity:.6}.msg{margin-top:15px;padding:12px;border-radius:10px;background:#f5e9eb;font-size:14px}.hidden{display:none}
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#f7f3ef;color:#201b1b}button,input,select{font:inherit}button{cursor:pointer}.hidden{display:none!important}
+main{min-height:100vh;padding:18px}.wrap{width:min(980px,100%);margin:auto}.card{background:#fff;border-radius:22px;padding:24px;box-shadow:0 10px 30px rgba(0,0,0,.08);margin-bottom:16px}.login{max-width:430px;margin:7vh auto}
+.logo{width:64px;height:64px;border-radius:18px;background:#7c1d2d;color:#fff;display:grid;place-items:center;font-size:30px;margin-bottom:18px}h1{margin:0 0 6px;font-size:28px}h2{margin:0 0 6px;font-size:21px}.sub{margin:0 0 20px;color:#6d6464}
+label{display:block;font-weight:650;font-size:14px;margin:14px 0 7px}input,select{width:100%;padding:13px;border:1px solid #d8d0cc;border-radius:12px;background:#fff}
+button.primary{width:100%;padding:14px;border:0;border-radius:12px;background:#7c1d2d;color:#fff;font-weight:750;margin-top:18px}button.secondary{padding:10px 14px;border:1px solid #d8d0cc;border-radius:10px;background:#fff;font-weight:650}button.danger{padding:10px 14px;border:0;border-radius:10px;background:#8f2437;color:#fff;font-weight:700}
+.msg{margin-top:14px;padding:12px;border-radius:11px;background:#f5e9eb;font-size:14px}.success{background:#eaf6ed}.warn{background:#fff5df}
+.top{display:flex;justify-content:space-between;align-items:center;gap:12px;margin-bottom:16px}.brand{display:flex;gap:12px;align-items:center}.brandIcon{width:45px;height:45px;border-radius:13px;background:#7c1d2d;color:#fff;display:grid;place-items:center}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}.stat{padding:18px;border-radius:16px;background:#faf7f4}.stat b{font-size:28px;display:block}.stat span{color:#6d6464;font-size:13px}
+.row{display:flex;gap:10px;align-items:end}.row>*{flex:1}.request{border:1px solid #eadfdb;border-radius:16px;padding:16px;margin-top:12px}.requestHead{display:flex;justify-content:space-between;gap:12px}.pill{display:inline-block;padding:5px 9px;border-radius:999px;font-size:12px;font-weight:750;background:#eee;color:#555}.pending{background:#fff0c7;color:#785500}.approved{background:#e5f5e8;color:#21652e}.rejected{background:#f8e2e5;color:#8a1f32}
+.actions{display:flex;gap:10px;margin-top:14px}.actions button{flex:1}.muted{color:#746b68;font-size:13px}.empty{text-align:center;padding:30px;color:#746b68}
+@media(max-width:650px){.grid{grid-template-columns:1fr}.row{display:block}.top{align-items:flex-start}.top .secondary{white-space:nowrap}.card{padding:19px}}
 </style>
 </head>
 <body>
-<main>
-<section class="card" id="login">
-<div class="logo">🏠</div>
-<h1>Nirbhaya RWA Visitor</h1>
-<p class="sub">Secure visitor approval system</p>
+<main><div class="wrap">
+<section class="card login" id="login">
+<div class="logo">🏠</div><h1>Nirbhaya RWA Visitor</h1><p class="sub">Secure visitor approval system</p>
 <form id="form">
-<label>Email</label>
-<input id="email" type="email" autocomplete="username" required placeholder="Enter email">
-<label>Password</label>
-<input id="password" type="password" autocomplete="current-password" required placeholder="Enter password">
-<button id="loginBtn">Login</button>
-</form>
-<div id="msg" class="msg hidden" aria-live="polite"></div>
+<label>Email</label><input id="email" type="email" autocomplete="username" required placeholder="Enter email">
+<label>Password</label><input id="password" type="password" autocomplete="current-password" required placeholder="Enter password">
+<button class="primary" id="loginBtn">Login</button>
+</form><div id="loginMsg" class="msg hidden"></div>
 </section>
 
-<section class="card hidden" id="home">
-<div class="logo">👋</div>
-<h1>Welcome</h1>
-<p class="sub" id="userEmail"></p>
-<div class="msg">Your account is connected. The Security and Resident dashboards will be added next.</div>
-<button id="logout" type="button">Logout</button>
+<section id="app" class="hidden">
+<div class="top"><div class="brand"><div class="brandIcon">🏠</div><div><h1>Nirbhaya RWA</h1><div class="muted" id="roleText"></div></div></div><button class="secondary" id="logout">Logout</button></div>
+
+<section id="securityView" class="hidden">
+<div class="card"><h2>Security Desk</h2><p class="sub">Create a visitor approval request for a residence.</p>
+<div class="row"><div><label>House</label><select id="houseSelect"><option value="">Select house</option></select></div><div><label>Floor</label><select id="floorSelect"><option value="">Select floor</option></select></div></div>
+<label>Visitor Name</label><input id="visitorName" placeholder="e.g. Rahul Sharma">
+<label>Purpose</label><select id="purpose"><option value="">Select purpose</option><option>Guest</option><option>Delivery</option><option>Cab / Auto</option><option>Domestic Help</option><option>Service / Maintenance</option><option>Other</option></select>
+<label>Mobile Number (optional)</label><input id="visitorPhone" inputmode="tel" placeholder="Visitor mobile number">
+<label>Vehicle Number (optional)</label><input id="vehicleNo" placeholder="e.g. HR26AB1234">
+<button class="primary" id="sendRequest">Send Approval Request</button><div id="securityMsg" class="msg hidden"></div>
+</div>
+<div class="card"><h2>Recent Requests</h2><div id="securityRequests"><div class="empty">Loading...</div></div></div>
 </section>
-</main>
+
+<section id="residentView" class="hidden">
+<div class="card"><h2>Resident Dashboard</h2><p class="sub" id="residenceLabel">Loading residence...</p>
+<div class="grid"><div class="stat"><b id="pendingCount">0</b><span>Pending approvals</span></div><div class="stat"><b id="todayCount">0</b><span>Today's requests</span></div></div>
+<div id="residentRequests" style="margin-top:16px"><div class="empty">Loading...</div></div>
+</div>
+</section>
+
+<section id="adminView" class="hidden">
+<div class="card"><h2>Admin</h2><p class="sub">Administrator dashboard will be expanded after the visitor flow is tested.</p>
+<div class="msg warn">User roles and residence mapping are maintained in Firebase Firestore during this setup stage.</div></div>
+</section>
+</section>
+</div></main>
 
 <script type="module">
 import {initializeApp} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
 import {getAuth,signInWithEmailAndPassword,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+import {getFirestore,collection,doc,getDoc,getDocs,addDoc,updateDoc,query,where,orderBy,limit,onSnapshot,serverTimestamp} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-firestore.js";
 
-const firebaseConfig={
-apiKey:"AIzaSyCogGtHCMWKwhTKqnoSBGfHNc2eFUMFXqk",
-authDomain:"visitor-management-caa2d.firebaseapp.com",
-projectId:"visitor-management-caa2d",
-storageBucket:"visitor-management-caa2d.firebasestorage.app",
-messagingSenderId:"152437284556",
-appId:"1:152437284556:web:fccf01ff8830f7067c6c69"
-};
-const app=initializeApp(firebaseConfig);
-const auth=getAuth(app);
-const login=document.getElementById("login"),home=document.getElementById("home");
-const form=document.getElementById("form"),btn=document.getElementById("loginBtn"),msg=document.getElementById("msg");
-form.addEventListener("submit",async e=>{
-e.preventDefault();msg.classList.add("hidden");btn.disabled=true;btn.textContent="Logging in...";
-try{await signInWithEmailAndPassword(auth,email.value.trim(),password.value)}
-catch(e){msg.textContent="Login failed. Please check your email and password.";msg.classList.remove("hidden")}
-finally{btn.disabled=false;btn.textContent="Login"}
+const firebaseConfig={apiKey:"AIzaSyCogGtHCMWKwhTKqnoSBGfHNc2eFUMFXqk",authDomain:"visitor-management-caa2d.firebaseapp.com",projectId:"visitor-management-caa2d",storageBucket:"visitor-management-caa2d.firebasestorage.app",messagingSenderId:"152437284556",appId:"1:152437284556:web:fccf01ff8830f7067c6c69"};
+const app=initializeApp(firebaseConfig),auth=getAuth(app),db=getFirestore(app);
+const $=id=>document.getElementById(id);let profile=null,residences=[],unsubscribeRequests=null;
+
+function showMsg(el,text,type=""){el.textContent=text;el.className="msg "+type}
+function esc(v){return String(v??"").replace(/[&<>"']/g,m=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[m]))}
+function formatTime(ts){if(!ts)return "";const d=ts.toDate?ts.toDate():new Date(ts);return d.toLocaleString([], {day:"2-digit",month:"short",hour:"2-digit",minute:"2-digit"})}
+
+$("form").addEventListener("submit",async e=>{e.preventDefault();$("loginMsg").classList.add("hidden");$("loginBtn").disabled=true;$("loginBtn").textContent="Logging in...";try{await signInWithEmailAndPassword(auth,$("email").value.trim(),$("password").value)}catch(e){showMsg($("loginMsg"),"Login failed. Please check your email and password.")}finally{$("loginBtn").disabled=false;$("loginBtn").textContent="Login"}});
+$("logout").addEventListener("click",()=>signOut(auth));
+
+async function loadProfile(user){
+ const snap=await getDoc(doc(db,"users",user.uid));
+ if(!snap.exists())throw new Error("No user profile found for this account.");
+ profile={uid:user.uid,...snap.data()};
+ $("roleText").textContent=(profile.role||"user").toUpperCase()+" • "+(user.email||"");
+ $("login").classList.add("hidden");$("app").classList.remove("hidden");
+ $("securityView").classList.toggle("hidden",profile.role!=="security");
+ $("residentView").classList.toggle("hidden",profile.role!=="resident");
+ $("adminView").classList.toggle("hidden",profile.role!=="admin");
+ if(profile.role==="security")await initSecurity();
+ if(profile.role==="resident")await initResident();
+}
+
+async function initSecurity(){
+ const snap=await getDocs(collection(db,"residences"));
+ residences=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>String(a.houseNo??a.house??"").localeCompare(String(b.houseNo??b.house??""),undefined,{numeric:true}));
+ const houses=[...new Map(residences.map(r=>[String(r.houseNo??r.house??""),String(r.houseNo??r.house??"")])).values()];
+ $("houseSelect").innerHTML='<option value="">Select house</option>'+houses.map(h=>'<option value="'+esc(h)+'">'+esc(h)+'</option>').join("");
+ $("floorSelect").innerHTML='<option value="">Select floor</option>';
+ $("houseSelect").onchange=()=>{const h=$("houseSelect").value;const floors=residences.filter(r=>String(r.houseNo??r.house??"")===h).map(r=>String(r.floor??""));$("floorSelect").innerHTML='<option value="">Select floor</option>'+floors.map(f=>'<option value="'+esc(f)+'">'+esc(f)+'</option>').join("")};
+ const q=query(collection(db,"visitorRequests"),where("createdBy","==",profile.uid),orderBy("createdAt","desc"),limit(20));
+ unsubscribeRequests=onSnapshot(q,s=>renderSecurityRequests(s.docs.map(d=>({id:d.id,...d.data()}))),()=>{$("securityRequests").innerHTML='<div class="msg">Could not load requests. Firestore rules or an index may need configuration.</div>'});
+ $("sendRequest").onclick=sendRequest;
+}
+
+async function sendRequest(){
+ const house=$("houseSelect").value,floor=$("floorSelect").value,name=$("visitorName").value.trim(),purpose=$("purpose").value;
+ if(!house||!floor||!name||!purpose){showMsg($("securityMsg"),"Please select house, floor, visitor name and purpose.");return}
+ const residence=residences.find(r=>String(r.houseNo??r.house??"")===house&&String(r.floor??"")===floor);
+ if(!residence){showMsg($("securityMsg"),"Residence mapping not found.");return}
+ const residentUid=residence.residentUid||residence.residentId||residence.userId||"";
+ if(!residentUid){showMsg($("securityMsg"),"This residence does not have a resident account mapped yet.");return}
+ try{$("sendRequest").disabled=true;await addDoc(collection(db,"visitorRequests"),{residenceId:residence.id,houseNo:house,floor,visitorName:name,purpose,visitorPhone:$("visitorPhone").value.trim(),vehicleNo:$("vehicleNo").value.trim(),status:"pending",createdBy:profile.uid,residentUid,createdAt:serverTimestamp()});showMsg($("securityMsg"),"Approval request sent to the resident.","success");$("visitorName").value="";$("visitorPhone").value="";$("vehicleNo").value="";$("purpose").value="";$("houseSelect").value="";$("floorSelect").innerHTML='<option value="">Select floor</option>'}catch(e){showMsg($("securityMsg"),"Could not send request: "+e.message)}finally{$("sendRequest").disabled=false}
+}
+
+function renderSecurityRequests(items){
+ if(!items.length){$("securityRequests").innerHTML='<div class="empty">No visitor requests yet.</div>';return}
+ $("securityRequests").innerHTML=items.map(r=>'<div class="request"><div class="requestHead"><div><b>'+esc(r.visitorName)+'</b><div class="muted">'+esc(r.houseNo)+'-'+esc(r.floor)+' • '+esc(r.purpose)+'</div></div><span class="pill '+esc(r.status)+'">'+esc(r.status||"pending").toUpperCase()+'</span></div><div class="muted" style="margin-top:8px">'+formatTime(r.createdAt)+(r.vehicleNo?' • '+esc(r.vehicleNo):'')+'</div></div>').join("");
+}
+
+async function initResident(){
+ const rid=profile.residenceId||profile.residence||"";let residence=null;
+ if(rid){const s=await getDoc(doc(db,"residences",rid));if(s.exists())residence={id:s.id,...s.data()}}
+ if(!residence){const all=await getDocs(query(collection(db,"residences"),where("residentUid","==",profile.uid),limit(1)));if(!all.empty)residence={id:all.docs[0].id,...all.docs[0].data()}}
+ if(!residence){$("residenceLabel").textContent="No residence is mapped to this account.";return}
+ $("residenceLabel").textContent="House "+(residence.houseNo??residence.house)+" • Floor "+residence.floor;
+ const q=query(collection(db,"visitorRequests"),where("residentUid","==",profile.uid),orderBy("createdAt","desc"),limit(30));
+ unsubscribeRequests=onSnapshot(q,s=>renderResidentRequests(s.docs.map(d=>({id:d.id,...d.data()}))),()=>{$("residentRequests").innerHTML='<div class="msg">Could not load approval requests. Firestore rules or an index may need configuration.</div>'});
+}
+
+function renderResidentRequests(items){
+ const pending=items.filter(r=>r.status==="pending").length;const today=new Date();today.setHours(0,0,0,0);
+ const todayCount=items.filter(r=>r.createdAt&&r.createdAt.toDate&&r.createdAt.toDate()>=today).length;
+ $("pendingCount").textContent=pending;$("todayCount").textContent=todayCount;
+ if(!items.length){$("residentRequests").innerHTML='<div class="empty">No visitor requests.</div>';return}
+ $("residentRequests").innerHTML=items.map(r=>{const buttons=r.status==="pending"?'<div class="actions"><button class="primary approve" data-id="'+r.id+'">Approve</button><button class="danger reject" data-id="'+r.id+'">Reject</button></div>':"";return '<div class="request"><div class="requestHead"><div><b>'+esc(r.visitorName)+'</b><div class="muted">'+esc(r.purpose)+' • House '+esc(r.houseNo)+'-'+esc(r.floor)+'</div></div><span class="pill '+esc(r.status)+'">'+esc(r.status).toUpperCase()+'</span></div><div class="muted" style="margin-top:8px">'+formatTime(r.createdAt)+(r.visitorPhone?' • '+esc(r.visitorPhone):'')+(r.vehicleNo?' • '+esc(r.vehicleNo):'')+'</div>'+buttons+'</div>'}).join("");
+ document.querySelectorAll(".approve").forEach(b=>b.onclick=()=>decide(b.dataset.id,"approved"));document.querySelectorAll(".reject").forEach(b=>b.onclick=()=>decide(b.dataset.id,"rejected"));
+}
+
+async function decide(id,status){
+ try{const s=await getDoc(doc(db,"visitorRequests",id));if(!s.exists()||s.data().residentUid!==profile.uid)return;await updateDoc(doc(db,"visitorRequests",id),{status,decidedBy:profile.uid,decidedAt:serverTimestamp()})}catch(e){alert("Could not update request: "+e.message)}
+}
+
+onAuthStateChanged(auth,async user=>{
+ if(!user){$("login").classList.remove("hidden");$("app").classList.add("hidden");return}
+ try{await loadProfile(user)}
+ catch(e){$("login").classList.add("hidden");$("app").classList.remove("hidden");$("roleText").textContent="SETUP REQUIRED";$("securityView").classList.add("hidden");$("residentView").classList.add("hidden");$("adminView").classList.remove("hidden");$("adminView").querySelector(".msg").textContent=e.message+" Create a users/"+user.uid+" document in Firestore."}
 });
-document.getElementById("logout").addEventListener("click",()=>signOut(auth));
-onAuthStateChanged(auth,user=>{
-if(user){login.classList.add("hidden");home.classList.remove("hidden");document.getElementById("userEmail").textContent=user.email||""}
-else{login.classList.remove("hidden");home.classList.add("hidden")}
-});
-if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
+if("serviceWorker" in navigator)navigator.serviceWorker.register("sw.js").catch(()=>{});
 </script>
 </body>
 </html>
