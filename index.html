@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#7c1d2d">
+<meta name="description" content="Nirbhaya RWA Visitor Management">
+<link rel="manifest" href="manifest.json">
+<title>Nirbhaya RWA Visitor</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif;background:#f7f3ef;color:#201b1b}
+main{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:20px}
+.card{width:min(430px,100%);background:#fff;border-radius:24px;padding:28px;box-shadow:0 12px 36px rgba(0,0,0,.1)}
+.logo{width:64px;height:64px;border-radius:18px;background:#7c1d2d;color:#fff;display:grid;place-items:center;font-size:30px;margin-bottom:18px}
+h1{margin:0 0 6px;font-size:27px}.sub{margin:0 0 25px;color:#6d6464}
+label{display:block;font-weight:650;font-size:14px;margin:15px 0 7px}
+input{width:100%;padding:14px;border:1px solid #d8d0cc;border-radius:12px;font-size:16px}
+button{width:100%;padding:14px;border:0;border-radius:12px;background:#7c1d2d;color:#fff;font-size:16px;font-weight:700;margin-top:20px}
+button:disabled{opacity:.6}.msg{margin-top:15px;padding:12px;border-radius:10px;background:#f5e9eb;font-size:14px}.hidden{display:none}
+</style>
+</head>
+<body>
+<main>
+<section class="card" id="login">
+<div class="logo">🏠</div>
+<h1>Nirbhaya RWA Visitor</h1>
+<p class="sub">Secure visitor approval system</p>
+<form id="form">
+<label>Email</label>
+<input id="email" type="email" autocomplete="username" required placeholder="Enter email">
+<label>Password</label>
+<input id="password" type="password" autocomplete="current-password" required placeholder="Enter password">
+<button id="loginBtn">Login</button>
+</form>
+<div id="msg" class="msg hidden" aria-live="polite"></div>
+</section>
+
+<section class="card hidden" id="home">
+<div class="logo">👋</div>
+<h1>Welcome</h1>
+<p class="sub" id="userEmail"></p>
+<div class="msg">Your account is connected. The Security and Resident dashboards will be added next.</div>
+<button id="logout" type="button">Logout</button>
+</section>
+</main>
+
+<script type="module">
+import {initializeApp} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-app.js";
+import {getAuth,signInWithEmailAndPassword,onAuthStateChanged,signOut} from "https://www.gstatic.com/firebasejs/12.19.0/firebase-auth.js";
+
+const firebaseConfig={
+apiKey:"AIzaSyCogGtHCMWKwhTKqnoSBGfHNc2eFUMFXqk",
+authDomain:"visitor-management-caa2d.firebaseapp.com",
+projectId:"visitor-management-caa2d",
+storageBucket:"visitor-management-caa2d.firebasestorage.app",
+messagingSenderId:"152437284556",
+appId:"1:152437284556:web:fccf01ff8830f7067c6c69"
+};
+const app=initializeApp(firebaseConfig);
+const auth=getAuth(app);
+const login=document.getElementById("login"),home=document.getElementById("home");
+const form=document.getElementById("form"),btn=document.getElementById("loginBtn"),msg=document.getElementById("msg");
+form.addEventListener("submit",async e=>{
+e.preventDefault();msg.classList.add("hidden");btn.disabled=true;btn.textContent="Logging in...";
+try{await signInWithEmailAndPassword(auth,email.value.trim(),password.value)}
+catch(e){msg.textContent="Login failed. Please check your email and password.";msg.classList.remove("hidden")}
+finally{btn.disabled=false;btn.textContent="Login"}
+});
+document.getElementById("logout").addEventListener("click",()=>signOut(auth));
+onAuthStateChanged(auth,user=>{
+if(user){login.classList.add("hidden");home.classList.remove("hidden");document.getElementById("userEmail").textContent=user.email||""}
+else{login.classList.remove("hidden");home.classList.add("hidden")}
+});
+if("serviceWorker" in navigator) navigator.serviceWorker.register("sw.js").catch(()=>{});
+</script>
+</body>
+</html>
