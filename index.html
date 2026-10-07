@@ -91,12 +91,12 @@ async function loadProfile(user){
 }
 
 async function initSecurity(){
- const snap=await getDocs(collection(db,"residences"));
- residences=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>String(a.houseNo??a.house??"").localeCompare(String(b.houseNo??b.house??""),undefined,{numeric:true}));
- const houses=[...new Map(residences.map(r=>[String(r.houseNo??r.house??""),String(r.houseNo??r.house??"")])).values()];
+ const snap=await getDocs(collection(db,"houses"));
+ residences=snap.docs.map(d=>({id:d.id,...d.data()})).sort((a,b)=>String(a["House No"]??a.houseNo??a.house??"").localeCompare(String(b["House No"]??b.houseNo??b.house??""),undefined,{numeric:true}));
+ const houses=[...new Map(residences.map(r=>[String(r["House No"]??r.houseNo??r.house??""),String(r["House No"]??r.houseNo??r.house??"")])).values()];
  $("houseSelect").innerHTML='<option value="">Select house</option>'+houses.map(h=>'<option value="'+esc(h)+'">'+esc(h)+'</option>').join("");
  $("floorSelect").innerHTML='<option value="">Select floor</option>';
- $("houseSelect").onchange=()=>{const h=$("houseSelect").value;const floors=residences.filter(r=>String(r.houseNo??r.house??"")===h).map(r=>String(r.floor??""));$("floorSelect").innerHTML='<option value="">Select floor</option>'+floors.map(f=>'<option value="'+esc(f)+'">'+esc(f)+'</option>').join("")};
+ $("houseSelect").onchange=()=>{const h=$("houseSelect").value;const floors=residences.filter(r=>String(r["House No"]??r.houseNo??r.house??"")===h).map(r=>String(r.Floor??r.floor??""));$("floorSelect").innerHTML='<option value="">Select floor</option>'+floors.map(f=>'<option value="'+esc(f)+'">'+esc(f)+'</option>').join("")};
  const q=query(collection(db,"visitorRequests"),where("createdBy","==",profile.uid),orderBy("createdAt","desc"),limit(20));
  unsubscribeRequests=onSnapshot(q,s=>renderSecurityRequests(s.docs.map(d=>({id:d.id,...d.data()}))),()=>{$("securityRequests").innerHTML='<div class="msg">Could not load requests. Firestore rules or an index may need configuration.</div>'});
  $("sendRequest").onclick=sendRequest;
@@ -105,7 +105,7 @@ async function initSecurity(){
 async function sendRequest(){
  const house=$("houseSelect").value,floor=$("floorSelect").value,name=$("visitorName").value.trim(),purpose=$("purpose").value;
  if(!house||!floor||!name||!purpose){showMsg($("securityMsg"),"Please select house, floor, visitor name and purpose.");return}
- const residence=residences.find(r=>String(r.houseNo??r.house??"")===house&&String(r.floor??"")===floor);
+ const residence=residences.find(r=>String(r["House No"]??r.houseNo??r.house??"")===house&&String(r.Floor??r.floor??"")===floor);
  if(!residence){showMsg($("securityMsg"),"Residence mapping not found.");return}
  const residentUid=residence.residentUid||residence.residentId||residence.userId||"";
  if(!residentUid){showMsg($("securityMsg"),"This residence does not have a resident account mapped yet.");return}
@@ -119,10 +119,10 @@ function renderSecurityRequests(items){
 
 async function initResident(){
  const rid=profile.residenceId||profile.residence||"";let residence=null;
- if(rid){const s=await getDoc(doc(db,"residences",rid));if(s.exists())residence={id:s.id,...s.data()}}
- if(!residence){const all=await getDocs(query(collection(db,"residences"),where("residentUid","==",profile.uid),limit(1)));if(!all.empty)residence={id:all.docs[0].id,...all.docs[0].data()}}
+ if(rid){const s=await getDoc(doc(db,"houses",rid));if(s.exists())residence={id:s.id,...s.data()}}
+ if(!residence){const all=await getDocs(query(collection(db,"houses"),where("residentUid","==",profile.uid),limit(1)));if(!all.empty)residence={id:all.docs[0].id,...all.docs[0].data()}}
  if(!residence){$("residenceLabel").textContent="No residence is mapped to this account.";return}
- $("residenceLabel").textContent="House "+(residence.houseNo??residence.house)+" • Floor "+residence.floor;
+ $("residenceLabel").textContent="House "+(residence["House No"]??residence.houseNo??residence.house)+" • Floor "+residence.Floor??residence.floor;
  const q=query(collection(db,"visitorRequests"),where("residentUid","==",profile.uid),orderBy("createdAt","desc"),limit(30));
  unsubscribeRequests=onSnapshot(q,s=>renderResidentRequests(s.docs.map(d=>({id:d.id,...d.data()}))),()=>{$("residentRequests").innerHTML='<div class="msg">Could not load approval requests. Firestore rules or an index may need configuration.</div>'});
 }
